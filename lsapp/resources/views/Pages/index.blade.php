@@ -4,10 +4,8 @@
 
 @section('content')
 
-	@yield('service')
-	
-
-    
+	@include('Pages.services')
+	    
 
 
 

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Categorie;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use App\Service;
+use App\User;
 
-class CategorieController extends Controller
+class ProfileController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,10 +17,9 @@ class CategorieController extends Controller
      */
     public function index()
     {
-        $categorie = Categorie::all();
-        return view('Pages.sidebar')->with('categories', $categorie);
+        $service = service::all();
+        return view('profile.index')->with('service', $service);
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -25,7 +27,7 @@ class CategorieController extends Controller
      */
     public function create()
     {
-        return view('Categories.create');
+        //
     }
 
     /**
@@ -37,16 +39,6 @@ class CategorieController extends Controller
     public function store(Request $request)
     {
         //
-        $this->validate($request, [
-            'title' => 'required|max:255',
-        ]);
-    
-        $categorie = new categorie;
-        $categorie->title = $request->title;
-        $categorie->photo = "https://lorempixel.com/640/480/?35278";
-        $categorie->save();
-    
-        return redirect('/home');
     }
 
     /**
@@ -57,10 +49,13 @@ class CategorieController extends Controller
      */
     public function show($id)
     {
-        $categorie = Categorie::findOrFail($id);//->paginate(5);
-        return view('Categories.show')->with('categorie', $categorie)
-        ->with('services', $categorie->services)
-        ;
+        //
+        $user = User::findOrFail($id);
+
+        //$service = Service::findOrFail($id);
+        return view('profile.show')->with('user', $user)->with('services', $user->services);
+        
+        
     }
 
     /**
@@ -71,8 +66,8 @@ class CategorieController extends Controller
      */
     public function edit($id)
     {
-        $categorie = Categorie::findOrFail($id);
-        return view('Categories.edit')->with('categorie', $categorie);
+        $user = User::findOrFail($id);
+        return view('profile.edit')->with('user', $user);
     }
 
     /**
@@ -84,16 +79,18 @@ class CategorieController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //TODO validate
         $request->validate([
-            'title' => 'required|max:255',
-        ]
-        );
-        $categorie = Categorie::findOrFail($id);
-        $categorie->title = $request->get('title');
-        $categorie->save();
-        $categorie = Categorie::all();
-        return view('home')->with('categorie', $categorie);
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+        $user = User::findOrFail($id);
+        $user->name = $request->get('name');
+        $user->email = $request->get('email');
+        $user->password = Hash::make($request['password']);
+        $user->save();
+
+        return view('profile.index');
     }
 
     /**
@@ -104,9 +101,6 @@ class CategorieController extends Controller
      */
     public function destroy($id)
     {
-        //dd($id);
-        Categorie::findOrFail($id)->delete();
-        //session::put('success', 'Your Record Deleted Successfully.');
-        return redirect('home');
+        //
     }
 }

@@ -24,11 +24,9 @@
     <div class="container">
         <h3></h3>
         <div class="row">
-            <div class="col-lg-3">
-            @include('layouts.sidebar')
-            </div>
+            
 
-            <div class="col-lg-9">
+            <div class="col-lg-12">
                 @yield('content')
             </div>
         </div>

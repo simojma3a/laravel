@@ -12,4 +12,11 @@ class Categorie extends Model
     public $primaryKey = 'id';
     //timestamp
     public $timestamps = true;
+
+    public function services()
+    {
+        return $this->hasMany(Service::class);
+    }
+
+
 }

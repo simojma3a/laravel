@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Service;
-use App\Categorie;
+use App\User;
+use DB;
+//use App\Categorie;
 
 class serviceController extends Controller
 {
@@ -16,10 +18,12 @@ class serviceController extends Controller
     public function index()
     {
         //
-        $categorie = Categorie::all();
+
+        //$service = Service::paginate(6);
+        //return view('service.index')->with('service', $service);
         $service = Service::all();
-        //return view('Pages.services')->with('service', $service);
-        return view('Pages.services',compact(['categorie', $categorie,'service', $service]));
+        return view('Pages.services')->with('service', $service);
+        //return view('Pages.services',compact(['categorie', $categorie,'service', $service]));
 
     }
 
@@ -31,6 +35,7 @@ class serviceController extends Controller
     public function create()
     {
         //
+        
     }
 
     /**
@@ -42,6 +47,24 @@ class serviceController extends Controller
     public function store(Request $request)
     {
         //
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            'name' => 'required|max:255',
+            'adresse' => 'required|max:255',
+            'phone' => 'required|max:255',
+            'email' => 'required|max:255',
+        ]);
+    
+        $service = new Service;
+        $service->name = $request->name;
+        $service->adresse = $request->adresse;
+        $service->phone = $request->phone;
+        $service->email = $request->email;
+        $service->position = $request->position;
+        $service->photo = $request->photo;
+        $service->save();
+    
+        return redirect('/');
     }
 
     /**
@@ -53,6 +76,11 @@ class serviceController extends Controller
     public function show($id)
     {
         //
+        /* $categorie = Categorie::findOrFail($id);
+        return view('Categories.show')->with('categorie', $categorie); */
+
+        $service = Service::findOrFail($id);//->paginate(5);
+        return view('Service.show')->with('service', $service);
     }
 
     /**
@@ -84,8 +112,25 @@ class serviceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, int $id)
     {
-        //
+        
+        /*$serv = DB::table('service')
+                            ->where('id', $id)
+                            ->get();*/
+
+        $user_id = Service::select('*')->where('id', $id)->first();
+        $user = User::select("*")
+                    ->where('id', $user_id->user_id)
+                   ->first();
+        Service::findOrFail($id)->delete();
+       return view('profile.show')->with('user', $user)->with('services', $user->services);
+    }
+
+
+    public function indexx()
+    {
+        $service = Service::all();
+        return view('service.index')->with('service', $service);
     }
 }

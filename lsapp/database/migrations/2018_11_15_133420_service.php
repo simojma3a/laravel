@@ -21,6 +21,9 @@ class Service extends Migration
             $table->string('phone');
             $table->string('email');
             $table->string('position');
+            $table->string('photo');
+            $table->integer('categorie_id');
+            $table->integer('user_id');
             $table->timestamps();
         });
     }
